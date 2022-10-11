@@ -1,0 +1,29 @@
+server:
+  port: 8087
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ead-authuser
+    username: ProjectDecoder
+    password: microservices
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        show_sql: true
+        format_sql: true
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+  output:
+    ansi:
+      enabled: always
+logging:
+  level:
+    com.ead: TRACE
+    root: INFO
+    org.springframework.web: DEBUG
+    org.hibernate: INFO
