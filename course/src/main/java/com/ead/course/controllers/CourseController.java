@@ -42,7 +42,7 @@ public class CourseController {
         courseModel.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
         courseModel.setLastUpdatedDate(LocalDateTime.now(ZoneId.of("UTC")));
         var savedCourseModel = courseService.save(courseModel);
-        log.debug("POST CourseController::saveCourse received {}", courseModel.toString());
+        log.debug("POST CourseController::saveCourse saved with id{}", savedCourseModel.getId());
         log.info("Course saved successfully with id {}", savedCourseModel.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCourseModel);
     }
@@ -73,7 +73,7 @@ public class CourseController {
         }
         BeanUtils.copyProperties(courseDTO, courseModelOptional.get());
         courseModelOptional.get().setLastUpdatedDate(LocalDateTime.now(ZoneId.of("UTC")));
-        log.debug("POST CourseController::updateCourseById updated {}", courseModelOptional.get().toString());
+        log.debug("POST CourseController::updateCourseById updated with id {}", courseModelOptional.get().getId());
         log.info("Course updated successfully with id {}", courseModelOptional.get().getId());
         return ResponseEntity.status(HttpStatus.OK).body(courseService.save(courseModelOptional.get()));
     }
@@ -85,7 +85,7 @@ public class CourseController {
                                                                    size = 10,
                                                                    sort = "id",
                                                                    direction = Sort.Direction.ASC) Pageable pageable) {
-        log.debug("GET CourseController::getAllCourses received spec {} and {}", spec.toString(), pageable.toString());
+        log.debug("GET CourseController::getAllCourses received request");
         return ResponseEntity.status(HttpStatus.OK).body(courseService.findAll(spec, pageable));
     }
 
@@ -97,7 +97,7 @@ public class CourseController {
             log.warn("Course not found with id {}", courseId);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course Not Found.");
         }
-        log.debug("POST CourseController::getCourseById received {}", courseModelOptional.get().toString());
+        log.debug("POST CourseController::getCourseById received {}", courseModelOptional.get().getId());
         log.info("Course received successfully with id {}", courseModelOptional.get().getId());
         return ResponseEntity.status(HttpStatus.OK).body(courseModelOptional.get());
     }

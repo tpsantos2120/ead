@@ -51,7 +51,7 @@ public class LessonController {
         lessonModel.setLastUpdatedDate(LocalDateTime.now(ZoneId.of("UTC")));
         lessonModel.setModule(moduleModelOptional.get());
         var savedLessonModel = lessonService.save(lessonModel);
-        log.debug("POST LessonController::saveLesson saved {}", savedLessonModel.toString());
+        log.debug("POST LessonController::saveLesson saved {}", savedLessonModel.getId());
         log.info("Lesson saved successfully with id {}", savedLessonModel.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(savedLessonModel);
     }
@@ -67,7 +67,7 @@ public class LessonController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Lesson not found for this module.");
         }
         lessonService.delete(lessonModelOptional.get());
-        log.debug("DELETE LessonController::deleteLesson deleted {}", lessonModelOptional.get().toString());
+        log.debug("DELETE LessonController::deleteLesson deleted {}", lessonModelOptional.get().getId());
         log.info("Lesson deleted successfully with id {}", lessonModelOptional.get().getId());
         return ResponseEntity.status(HttpStatus.OK).body("Lesson deleted successfully.");
     }
@@ -85,7 +85,7 @@ public class LessonController {
         }
         BeanUtils.copyProperties(lessonDTO, lessonModelOptional.get());
         lessonModelOptional.get().setLastUpdatedDate(LocalDateTime.now(ZoneId.of("UTC")));
-        log.debug("PUT LessonController::updateLessonByModule updated {}", lessonModelOptional.get().toString());
+        log.debug("PUT LessonController::updateLessonByModule updated {}", lessonModelOptional.get().getId());
         log.info("Lesson updated successfully with id {}", lessonModelOptional.get().getId());
         return ResponseEntity.status(HttpStatus.OK).body(lessonService.save(lessonModelOptional.get()));
     }
@@ -113,7 +113,7 @@ public class LessonController {
             log.warn("Lesson not found with moduleId {} and lessonId {}", moduleId, lessonId);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Lesson not found for this module.");
         }
-        log.debug("GET LessonController::getOneLessonByModule received {}", lessonModelOptional.get().toString());
+        log.debug("GET LessonController::getOneLessonByModule received {}", lessonModelOptional.get().getId());
         log.info("Lesson retrieved successfully with id {}", lessonModelOptional.get().getId());
         return ResponseEntity.status(HttpStatus.OK).body(lessonModelOptional.get());
     }

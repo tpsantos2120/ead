@@ -43,7 +43,7 @@ public class UserController implements UserView {
     public ResponseEntity<Page<UserModel>> getAllUsers(SpecificationTemplate.UserSpec spec,
                                                        @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
 
-        log.debug("GET UserController::getAllUsers received spec {} and pageable {}", spec.toString(), pageable.toString());
+        log.debug("GET UserController::getAllUsers received request");
         Page<UserModel> userModelPage = userService.findAll(spec, pageable);
         if (!userModelPage.isEmpty()) {
             for (UserModel user : userModelPage.toList()) {

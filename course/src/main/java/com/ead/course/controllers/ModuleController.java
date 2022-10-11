@@ -52,7 +52,7 @@ public class ModuleController {
         moduleModel.setLastUpdatedDate(LocalDateTime.now(ZoneId.of("UTC")));
         moduleModel.setCourse(courseModelOptional.get());
         var savedCourseModel = moduleService.save(moduleModel);
-        log.debug("POST ModuleController::saveModule saved {}", savedCourseModel.toString());
+        log.debug("POST ModuleController::saveModule saved {}", savedCourseModel.getId());
         log.info("Module saved successfully with id {}", savedCourseModel.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCourseModel);
     }
@@ -68,7 +68,7 @@ public class ModuleController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Module not found for this course.");
         }
         moduleService.delete(moduleModelOptional.get());
-        log.debug("DELETE ModuleController::deleteModuleByCourse deleted {}", moduleModelOptional.get().toString());
+        log.debug("DELETE ModuleController::deleteModuleByCourse deleted {}", moduleModelOptional.get().getId());
         log.info("Module deleted successfully with id {}", moduleModelOptional.get().getId());
         return ResponseEntity.status(HttpStatus.OK).body("Module deleted successfully.");
     }
@@ -86,7 +86,7 @@ public class ModuleController {
         }
         BeanUtils.copyProperties(moduleDTO, moduleModelOptional.get());
         moduleModelOptional.get().setLastUpdatedDate(LocalDateTime.now(ZoneId.of("UTC")));
-        log.debug("PUT ModuleController::updateModuleByCourse updated {}", moduleModelOptional.get().toString());
+        log.debug("PUT ModuleController::updateModuleByCourse updated {}", moduleModelOptional.get().getId());
         log.info("Module updated successfully with id {}", moduleModelOptional.get().getId());
         return ResponseEntity.status(HttpStatus.OK).body(moduleService.save(moduleModelOptional.get()));
     }
@@ -116,7 +116,7 @@ public class ModuleController {
             log.warn("Module not found with courseId {} and moduleId {}", courseId, moduleId);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Module not found for this course.");
         }
-        log.debug("GET ModuleController::getOneModuleByCourse retrieved {}", moduleModelOptional.get().toString());
+        log.debug("GET ModuleController::getOneModuleByCourse retrieved {}", moduleModelOptional.get().getId());
         log.info("Module retrieved successfully with id {}", moduleModelOptional.get().getId());
         return ResponseEntity.status(HttpStatus.OK).body(moduleModelOptional.get());
     }
