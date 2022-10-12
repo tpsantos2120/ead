@@ -19,13 +19,12 @@ public class UserCourseModel implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(foreignKey = @ForeignKey(name = "FK_USER__TB_USER_ID"))
     private UserModel user;
 
-    @Column(name = "COURSE_ID", nullable = false)
+    @Column(name = "course_id", nullable = false)
     private UUID courseId;
 }
