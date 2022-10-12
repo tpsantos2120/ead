@@ -7,7 +7,8 @@ import com.ead.authuser.service.UserService;
 import com.ead.authuser.specifications.SpecificationTemplate;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.BeanUtils;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,16 +43,28 @@ public class UserController implements UserView {
 
     @GetMapping
     public ResponseEntity<Page<UserModel>> getAllUsers(SpecificationTemplate.UserSpec spec,
-                                                       @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+                                                       @PageableDefault(
+                                                               page = 0,
+                                                               size = 10,
+                                                               sort = "id",
+                                                               direction = Sort.Direction.ASC
+                                                       ) Pageable pageable,
+                                                       @RequestParam(required = false) UUID courseId) {
 
         log.debug("GET UserController::getAllUsers received request");
-        Page<UserModel> userModelPage = userService.findAll(spec, pageable);
+        Page<UserModel> userModelPage = null;
+        if (Objects.nonNull(courseId)) {
+            userModelPage = userService.findAll(SpecificationTemplate.usersByCourseId(courseId).and(spec), pageable);
+        } else {
+            userModelPage = userService.findAll(spec, pageable);
+        }
+
         if (!userModelPage.isEmpty()) {
             for (UserModel user : userModelPage.toList()) {
                 user.add(linkTo(methodOn(UserController.class).getUserById(user.getId())).withSelfRel());
             }
         }
-        log.debug("GET UserController::getAllUsers responded with {}", userModelPage.stream().toList().toString());
+        log.debug("GET UserController::getAllUsers responded");
         return ResponseEntity.status(HttpStatus.OK).body(userModelPage);
     }
 
@@ -94,7 +108,11 @@ public class UserController implements UserView {
             log.warn("User not found with id {}", userId);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User was not found.");
         }
-        BeanUtils.copyProperties(userDto, userModelOptional.get());
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+                .setSkipNullEnabled(true)
+                .setMatchingStrategy(MatchingStrategies.STRICT);
+        modelMapper.map(userDto, userModelOptional.get());
         userModelOptional.get().setLastUpdatedDate(LocalDateTime.now(ZoneId.of("UTC")));
         userService.save(userModelOptional.get());
         log.debug("PUT UserController::updateUserById updated {}", userModelOptional.get().getId());
