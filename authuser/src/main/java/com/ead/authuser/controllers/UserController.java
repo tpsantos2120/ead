@@ -69,7 +69,7 @@ public class UserController implements UserView {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<?> getUserById(@PathVariable(value = "userId") UUID userId) {
+    public ResponseEntity<Object> getUserById(@PathVariable(value = "userId") UUID userId) {
         log.debug("GET UserController::getUserById received {}", userId);
         Optional<UserModel> userModelOptional = userService.findById(userId);
         if (userModelOptional.isEmpty()) {

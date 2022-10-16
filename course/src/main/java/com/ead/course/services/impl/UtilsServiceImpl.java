@@ -1,6 +1,7 @@
 package com.ead.course.services.impl;
 
 import com.ead.course.services.UtilsService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -9,7 +10,8 @@ import java.util.UUID;
 @Service
 public class UtilsServiceImpl implements UtilsService {
 
-    private static final String REQUEST_URI = "http://localhost:8087/v1/users";
+    @Value("${ead.api.url.authuser}")
+    private String REQUEST_URI;
 
     @Override
     public String createUrlForGetAllUsersByCourseId(UUID courseId, Pageable pageable) {
@@ -18,5 +20,10 @@ public class UtilsServiceImpl implements UtilsService {
                 "&page=" + pageable.getPageNumber() +
                 "&size=" + pageable.getPageSize() +
                 "&sort=" + pageable.getSort().toString().replaceAll(":\\s+", ",");
+    }
+
+    @Override
+    public String createUrlForGetOneUserById(UUID userId) {
+        return REQUEST_URI + "/" + userId;
     }
 }
