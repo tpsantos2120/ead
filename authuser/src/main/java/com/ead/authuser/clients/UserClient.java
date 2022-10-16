@@ -45,12 +45,12 @@ public class UserClient {
                     .retrieve()
                     .toEntity(responseType)
                     .block();
-            searchResult = Objects.requireNonNull(Objects.requireNonNull(result).getBody()).getContent();
+            searchResult = result.getBody().getContent();
             log.debug("Response Number of Elements: {} ", searchResult.size());
         } catch (HttpStatusCodeException e) {
-            log.error("Error request /courses {} ", e);
+            log.error("Error request /courses", e);
         }
         log.info("Ending request /courses userId {} ", userId);
-        return Objects.requireNonNull(result).getBody();
+        return result.getBody();
     }
 }
