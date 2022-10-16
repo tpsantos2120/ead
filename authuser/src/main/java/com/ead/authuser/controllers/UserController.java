@@ -1,6 +1,6 @@
 package com.ead.authuser.controllers;
 
-import com.ead.authuser.dtos.UserDto;
+import com.ead.authuser.dtos.UserDTO;
 import com.ead.authuser.dtos.UserView;
 import com.ead.authuser.models.UserModel;
 import com.ead.authuser.service.UserService;
@@ -100,7 +100,7 @@ public class UserController implements UserView {
     public ResponseEntity<?> updateUserById(@PathVariable(value = "userId") UUID userId,
                                             @JsonView(UpdateUser.class)
                                             @Validated(UpdateUser.class)
-                                            @RequestBody UserDto userDto) {
+                                            @RequestBody UserDTO userDto) {
 
         log.debug("PUT UserController::updateUserById received id {} and {}", userId, userDto);
         Optional<UserModel> userModelOptional = userService.findById(userId);
@@ -124,7 +124,7 @@ public class UserController implements UserView {
     public ResponseEntity<?> updatePasswordById(@PathVariable(value = "userId") UUID userId,
                                                 @JsonView(UpdatePassword.class)
                                                 @Validated(UpdatePassword.class)
-                                                @RequestBody UserDto userDto) {
+                                                @RequestBody UserDTO userDto) {
 
         log.debug("PUT UserController::updatePasswordById received id {} and {}", userId, userDto);
         Optional<UserModel> userModelOptional = userService.findById(userId);
@@ -148,7 +148,7 @@ public class UserController implements UserView {
     public ResponseEntity<?> updateImageById(@PathVariable(value = "userId") UUID userId,
                                              @JsonView(UpdateImage.class)
                                              @Validated(UpdateImage.class)
-                                             @RequestBody UserDto userDto) {
+                                             @RequestBody UserDTO userDto) {
 
         log.debug("PUT UserController::updateImageById received id {} and {}", userId, userDto);
         Optional<UserModel> userModelOptional = userService.findById(userId);

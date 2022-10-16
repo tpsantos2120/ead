@@ -1,8 +1,8 @@
-package com.ead.authuser.clients;
+package com.ead.course.clients;
 
-import com.ead.authuser.dtos.CourseDTO;
-import com.ead.authuser.dtos.ResponsePageDTO;
-import com.ead.authuser.service.UtilsService;
+import com.ead.course.dtos.ResponsePageDTO;
+import com.ead.course.dtos.UserDTO;
+import com.ead.course.services.UtilsService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.ParameterizedTypeReference;
@@ -18,21 +18,21 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
-@Log4j2
 @AllArgsConstructor
-public class UserClient {
+@Log4j2
+public class CourseClient {
 
     private final WebClient webClient;
     private final UtilsService utilsService;
 
-    public Page<CourseDTO> getAllCoursesByUserId(Pageable pageable, UUID userId) {
-        List<CourseDTO> searchResult = null;
-        ResponseEntity<ResponsePageDTO<CourseDTO>> result = null;
-        String url = utilsService.createUrlForGetAllCoursesByUserId(userId, pageable);
+    public Page<UserDTO> getAllCoursesByUserId(Pageable pageable, UUID courseId) {
+        List<UserDTO> searchResult = null;
+        ResponseEntity<ResponsePageDTO<UserDTO>> result = null;
+        String url = utilsService.createUrlForGetAllUsersByCourseId(courseId, pageable);
         log.debug("Request URL: {} ", url);
         log.info("Request URL: {} ", url);
         try {
-            ParameterizedTypeReference<ResponsePageDTO<CourseDTO>> responseType = new ParameterizedTypeReference<>() {
+            ParameterizedTypeReference<ResponsePageDTO<UserDTO>> responseType = new ParameterizedTypeReference<>() {
             };
             result = webClient.method(HttpMethod.GET)
                     .uri(url)
@@ -44,7 +44,7 @@ public class UserClient {
         } catch (HttpStatusCodeException e) {
             log.error("Error request /courses", e);
         }
-        log.info("Ending request /courses userId {} ", userId);
+        log.info("Ending request /courses userId {} ", courseId);
         return result.getBody();
     }
 }

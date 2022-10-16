@@ -1,4 +1,4 @@
-package com.ead.authuser.configs;
+package com.ead.course.configs;
 
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;

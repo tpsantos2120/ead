@@ -1,6 +1,6 @@
 package com.ead.authuser.controllers;
 
-import com.ead.authuser.dtos.UserDto;
+import com.ead.authuser.dtos.UserDTO;
 import com.ead.authuser.dtos.UserView;
 import com.ead.authuser.enums.UserStatus;
 import com.ead.authuser.enums.UserType;
@@ -34,7 +34,7 @@ public class AuthenticationController implements UserView {
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Validated(RegisterUser.class)
                                           @JsonView(RegisterUser.class)
-                                          @RequestBody UserDto userDto) {
+                                          @RequestBody UserDTO userDto) {
 
         log.debug("POST registerUser received {}", userDto.toString());
         long startTime = System.currentTimeMillis();
