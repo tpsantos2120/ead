@@ -13,7 +13,6 @@
     <module>authuser</module>
     <module>notification</module>
     <module>course</module>
-    <module>auth-user</module>
   </modules>
 
   <name>ead-services</name>
