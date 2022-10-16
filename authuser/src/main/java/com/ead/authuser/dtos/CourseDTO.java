@@ -15,6 +15,7 @@ public class CourseDTO {
     private String title;
     private String description;
     private String imageUrl;
+    private String courseOutline;
     private CourseStatus courseStatus;
     private UUID userInstructor;
     private CourseLevel courseLevel;
