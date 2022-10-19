@@ -20,7 +20,7 @@ import java.util.UUID;
 @Component
 @Log4j2
 @AllArgsConstructor
-public class UserClient {
+public class CourseClient {
 
     private final WebClient webClient;
     private final UtilsService utilsService;
