@@ -26,4 +26,9 @@ public class UtilsServiceImpl implements UtilsService {
     public String createUrlForGetOneUserById(UUID userId) {
         return REQUEST_URI + "/" + userId;
     }
+
+    @Override
+    public String createUrlForSubscriptionUserToCourse(UUID userId) {
+        return REQUEST_URI + "/" + userId + "/courses/subscription";
+    }
 }

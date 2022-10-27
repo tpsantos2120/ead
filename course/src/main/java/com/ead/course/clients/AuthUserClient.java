@@ -1,5 +1,6 @@
 package com.ead.course.clients;
 
+import com.ead.course.dtos.CourseUserDTO;
 import com.ead.course.dtos.ResponsePageDTO;
 import com.ead.course.dtos.UserDTO;
 import com.ead.course.services.UtilsService;
@@ -57,7 +58,8 @@ public class AuthUserClient {
         log.info("Request URL: {} ", url);
         return webClient.method(HttpMethod.GET)
                 .uri(url)
-                .retrieve().onStatus(HttpStatus::is4xxClientError, clientResponse -> {
+                .retrieve()
+                .onStatus(HttpStatus::is4xxClientError, clientResponse -> {
                     log.error("Error request /users/{}", userId);
                     return Mono.error(new WebClientResponseException(
                             "Error request /users/" + userId,
@@ -70,5 +72,30 @@ public class AuthUserClient {
                 .toEntity(UserDTO.class)
                 .block();
 
+    }
+
+    public void postSubscriptionUserToCourse(UUID courseId, UUID userId) {
+        var courseUserDTO = new CourseUserDTO();
+        courseUserDTO.setCourseId(courseId);
+        courseUserDTO.setUserId(userId);
+        String url = utilsService.createUrlForSubscriptionUserToCourse(userId);
+        log.debug("Request URL: {} ", url);
+        log.info("Request URL: {} ", url);
+        webClient.method(HttpMethod.POST)
+                .uri(url)
+                .body(Mono.just(courseUserDTO), CourseUserDTO.class)
+                .retrieve()
+                .onStatus(HttpStatus::is4xxClientError, clientResponse -> {
+                    log.error("Error request /users/{}", userId);
+                    return Mono.error(new WebClientResponseException(
+                            "Error request /users/" + userId,
+                            clientResponse.rawStatusCode(),
+                            clientResponse.statusCode().getReasonPhrase(),
+                            clientResponse.headers().asHttpHeaders(),
+                            null,
+                            null));
+                })
+                .bodyToMono(Void.class)
+                .block();
     }
 }

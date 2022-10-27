@@ -6,6 +6,7 @@ import com.ead.authuser.repositories.UserCourseRepository;
 import com.ead.authuser.service.UserCourseService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -21,6 +22,7 @@ public class UserCourseServiceImpl implements UserCourseService {
     }
 
     @Override
+    @Transactional
     public UserCourseModel save(UserCourseModel userCourseModel) {
         return userCourseRepository.save(userCourseModel);
     }

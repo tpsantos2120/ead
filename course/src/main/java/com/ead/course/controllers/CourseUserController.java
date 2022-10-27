@@ -46,6 +46,7 @@ public class CourseUserController {
                                                         @RequestBody @Valid SubscriptionDTO subscriptionDTO) {
         Optional<CourseModel> courseModelOptional = courseService.findById(courseId);
         ResponseEntity<UserDTO> responseUser = null;
+        CourseUserModel responseUserCourse = null;
         if (courseModelOptional.isEmpty()) {
             log.warn("Course not found with id {}", courseId);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course Not Found.");
@@ -68,7 +69,7 @@ public class CourseUserController {
             }
         }
 
-        CourseUserModel courseUserModel = courseUserService.save(courseModelOptional.get().convertToCourseUserModel(subscriptionDTO.getUserId()));
+        CourseUserModel courseUserModel = courseUserService.saveAndSendSubscriptionUserToCourse(courseModelOptional.get().convertToCourseUserModel(subscriptionDTO.getUserId()));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(courseUserModel);
     }
