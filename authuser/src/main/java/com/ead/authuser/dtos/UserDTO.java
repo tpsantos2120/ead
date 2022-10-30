@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserDto implements UserView {
+public class UserDTO implements UserView {
 
     private UUID id;
 
