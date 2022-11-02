@@ -12,7 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,7 +22,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class CourseClient {
 
-    private final WebClient webClient;
+    private final RestTemplate restTemplate;
     private final UtilsService utilsService;
 
     public Page<CourseDTO> getAllCoursesByUserId(Pageable pageable, UUID userId) {
@@ -34,11 +34,7 @@ public class CourseClient {
         try {
             ParameterizedTypeReference<ResponsePageDTO<CourseDTO>> responseType = new ParameterizedTypeReference<>() {
             };
-            result = webClient.method(HttpMethod.GET)
-                    .uri(url)
-                    .retrieve()
-                    .toEntity(responseType)
-                    .block();
+            result = restTemplate.exchange(url, HttpMethod.GET, null, responseType);
             searchResult = result.getBody().getContent();
             log.debug("Response Number of Elements: {} ", searchResult.size());
         } catch (HttpStatusCodeException e) {

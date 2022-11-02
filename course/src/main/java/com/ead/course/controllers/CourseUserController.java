@@ -17,7 +17,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.validation.Valid;
 import java.util.Objects;
@@ -62,7 +62,7 @@ public class CourseUserController {
                 log.warn("User is blocked");
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("User is blocked.");
             }
-        } catch (WebClientResponseException e) {
+        } catch (HttpClientErrorException e) {
             if (e.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
                 log.warn("User not found with id {}", subscriptionDTO.getUserId());
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found.");

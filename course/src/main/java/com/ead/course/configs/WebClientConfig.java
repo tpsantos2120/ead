@@ -1,30 +1,17 @@
 package com.ead.course.configs;
 
-import io.netty.channel.ChannelOption;
-import io.netty.handler.timeout.ReadTimeoutHandler;
-import io.netty.handler.timeout.WriteTimeoutHandler;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.netty.http.client.HttpClient;
-
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class WebClientConfig {
 
     @Bean
     @LoadBalanced
-    public WebClient webClient() {
-        HttpClient httpClient = HttpClient.create()
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 45000)
-                .responseTimeout(Duration.ofSeconds(45))
-                .doOnConnected(conn ->
-                        conn.addHandlerLast(new ReadTimeoutHandler(45, TimeUnit.SECONDS))
-                                .addHandlerLast(new WriteTimeoutHandler(45, TimeUnit.SECONDS)));
-        return WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient)).build();
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        return builder.build();
     }
 }
