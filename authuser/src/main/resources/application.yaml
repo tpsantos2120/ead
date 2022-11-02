@@ -1,12 +1,15 @@
 server:
   port: 8087
+
 spring:
   application:
-    name: authuser
+    name: ead-authuser-service
+
   datasource:
     url: jdbc:postgresql://localhost:5432/ead-authuser
     username: ProjectDecoder
     password: microservices
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -20,9 +23,11 @@ spring:
         show_sql: true
         format_sql: true
       dialect: org.hibernate.dialect.PostgreSQLDialect
+
   output:
     ansi:
       enabled: always
+
 logging:
   level:
     com.ead: TRACE
@@ -34,3 +39,40 @@ ead:
   api:
     url:
       course: 'http://localhost:8088/v1/courses'
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
+
+
+
+management:
+  server:
+    port: 9000
+
+
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+  info:
+    env:
+      enabled: true
+    build:
+      enabled: true
+
+  endpoint:
+    info:
+      enabled: true
+
+info:
+  application:
+    name: ${spring.application.name}
+    description: Very cool Spring Boot application
+    version: '@project.version@'
+    spring-cloud-version: '@spring.cloud.version@'
+    spring-boot-version: '@project.parent.version@'

@@ -2,12 +2,10 @@ package com.ead.authuser;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 @SpringBootApplication
-@EnableFeignClients(
-        basePackages = "com.ead.clients"
-)
+@EnableEurekaClient
 public class AuthUserApplication {
 
     public static void main(String[] args) {
