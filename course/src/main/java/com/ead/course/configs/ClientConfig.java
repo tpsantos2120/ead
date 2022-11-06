@@ -1,4 +1,4 @@
-package com.ead.authuser.configs;
+package com.ead.course.configs;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class WebClientConfig {
+public class ClientConfig {
 
     @Bean
     @LoadBalanced
