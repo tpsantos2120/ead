@@ -36,7 +36,7 @@ logging:
 ead:
   api:
     url:
-      authuser: 'http://ead-authuser-service/v1/users'
+      authuser: 'http://ead-authuser-service/ead-authuser/v1/users'
 
 eureka:
   client:

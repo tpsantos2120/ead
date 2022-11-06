@@ -40,7 +40,7 @@ logging:
 ead:
   api:
     url:
-      course: 'http://ead-course-service/v1/courses'
+      course: 'http://ead-course-service/ead-course/v1/courses'
 
 eureka:
   client:
