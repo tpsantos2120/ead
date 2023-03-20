@@ -19,7 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
+
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
