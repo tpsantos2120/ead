@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.UUID;
 
@@ -42,7 +42,7 @@ public class CourseValidator implements Validator {
             if (responseUserInstructor.getBody().getUserType().equals(UserType.STUDENT)) {
                 errors.rejectValue("userInstructor", "UserInstructorError", "User must be INSTRUCTOR or ADMIN");
             }
-        } catch (WebClientResponseException e) {
+        } catch (HttpClientErrorException e) {
             if (e.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
                 errors.rejectValue("userInstructor", "UserInstructorError", "Instructor not found");
             }

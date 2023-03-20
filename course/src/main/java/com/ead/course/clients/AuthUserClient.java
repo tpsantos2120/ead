@@ -10,13 +10,10 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,7 +23,7 @@ import java.util.UUID;
 @Log4j2
 public class AuthUserClient {
 
-    private final WebClient webClient;
+    private final RestTemplate restTemplate;
     private final UtilsService utilsService;
 
     public Page<UserDTO> getAllCoursesByUserId(Pageable pageable, UUID courseId) {
@@ -38,11 +35,7 @@ public class AuthUserClient {
         try {
             ParameterizedTypeReference<ResponsePageDTO<UserDTO>> responseType = new ParameterizedTypeReference<>() {
             };
-            result = webClient.method(HttpMethod.GET)
-                    .uri(url)
-                    .retrieve()
-                    .toEntity(responseType)
-                    .block();
+            result = restTemplate.exchange(url, HttpMethod.GET, null, responseType);
             searchResult = result.getBody().getContent();
             log.debug("Response Number of Elements: {} ", searchResult.size());
         } catch (HttpStatusCodeException e) {
@@ -56,22 +49,7 @@ public class AuthUserClient {
         String url = utilsService.createUrlForGetOneUserById(userId);
         log.debug("Request URL: {} ", url);
         log.info("Request URL: {} ", url);
-        return webClient.method(HttpMethod.GET)
-                .uri(url)
-                .retrieve()
-                .onStatus(HttpStatus::is4xxClientError, clientResponse -> {
-                    log.error("Error request /users/{}", userId);
-                    return Mono.error(new WebClientResponseException(
-                            "Error request /users/" + userId,
-                            clientResponse.rawStatusCode(),
-                            clientResponse.statusCode().getReasonPhrase(),
-                            clientResponse.headers().asHttpHeaders(),
-                            null,
-                            null));
-                })
-                .toEntity(UserDTO.class)
-                .block();
-
+        return restTemplate.exchange(url, HttpMethod.GET, null, UserDTO.class);
     }
 
     public void postSubscriptionUserToCourse(UUID courseId, UUID userId) {
@@ -81,21 +59,6 @@ public class AuthUserClient {
         String url = utilsService.createUrlForSubscriptionUserToCourse(userId);
         log.debug("Request URL: {} ", url);
         log.info("Request URL: {} ", url);
-        webClient.method(HttpMethod.POST)
-                .uri(url)
-                .body(Mono.just(courseUserDTO), CourseUserDTO.class)
-                .retrieve()
-                .onStatus(HttpStatus::is4xxClientError, clientResponse -> {
-                    log.error("Error request /users/{}", userId);
-                    return Mono.error(new WebClientResponseException(
-                            "Error request /users/" + userId,
-                            clientResponse.rawStatusCode(),
-                            clientResponse.statusCode().getReasonPhrase(),
-                            clientResponse.headers().asHttpHeaders(),
-                            null,
-                            null));
-                })
-                .bodyToMono(Void.class)
-                .block();
+        restTemplate.postForEntity(url, courseUserDTO, Void.class);
     }
 }
