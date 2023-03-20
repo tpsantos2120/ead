@@ -1,0 +1,75 @@
+server:
+  port: 8087
+  servlet:
+    context-path: '/ead-authuser/'
+
+spring:
+  application:
+    name: ead-authuser-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ead-authuser
+    username: ProjectDecoder
+    password: microservices
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        show_sql: true
+        format_sql: true
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  output:
+    ansi:
+      enabled: always
+
+logging:
+  level:
+    com.ead: TRACE
+    root: INFO
+    org.springframework.web: DEBUG
+    org.hibernate: INFO
+
+ead:
+  api:
+    url:
+      course: 'http://ead-course-service/ead-course/v1/courses'
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: 'http://localhost:8761/eureka'
+  instance:
+    hostname: localhost
+
+management:
+  server:
+    port: 9000
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  info:
+    env:
+      enabled: true
+    build:
+      enabled: true
+
+  endpoint:
+    info:
+      enabled: true
+
+info:
+  application:
+    name: ${spring.application.name}
+    description: Very cool Spring Boot application
+    version: '@project.version@'
+    spring-cloud-version: '@spring.cloud.version@'
+    spring-boot-version: '@project.parent.version@'

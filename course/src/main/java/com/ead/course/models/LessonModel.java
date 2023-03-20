@@ -2,7 +2,7 @@ package com.ead.course.models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serial;
@@ -10,7 +10,11 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "TB_LESSONS")
 @JsonInclude(JsonInclude.Include.NON_NULL)

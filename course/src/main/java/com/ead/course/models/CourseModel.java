@@ -4,7 +4,7 @@ import com.ead.course.enums.CourseLevel;
 import com.ead.course.enums.CourseStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -15,7 +15,11 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "TB_COURSES")
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -65,5 +69,9 @@ public class CourseModel implements Serializable {
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
-    private Set<CourseUserModel> courses;
+    private Set<CourseUserModel> coursesByUserId;
+
+    public CourseUserModel convertToCourseUserModel(UUID userId) {
+        return new CourseUserModel(null, this, userId);
+    }
 }
