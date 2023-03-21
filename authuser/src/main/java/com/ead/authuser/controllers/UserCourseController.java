@@ -1,7 +1,6 @@
 package com.ead.authuser.controllers;
 
 import com.ead.authuser.clients.CourseClient;
-import com.ead.authuser.dtos.CourseDTO;
 import com.ead.authuser.dtos.UserCourseDTO;
 import com.ead.authuser.models.UserCourseModel;
 import com.ead.authuser.models.UserModel;
@@ -10,7 +9,6 @@ import com.ead.authuser.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -32,8 +30,13 @@ public class UserCourseController {
     private final UserCourseService userCourseService;
 
     @GetMapping("/v1/users/{userId}/courses")
-    public ResponseEntity<Page<CourseDTO>> getAllCoursesByUserId(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
-                                                                 @PathVariable(value = "userId") UUID userId) {
+    public ResponseEntity<Object> getAllCoursesByUserId(@PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
+                                                        @PathVariable(value = "userId") UUID userId) {
+        Optional<UserModel> userModelOptional = userService.findById(userId);
+        if (userModelOptional.isEmpty()) {
+            log.warn("User not found with id {}", userId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found.");
+        }
         return ResponseEntity.status(HttpStatus.OK).body(courseClient.getAllCoursesByUserId(pageable, userId));
     }
 
