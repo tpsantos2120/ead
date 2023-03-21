@@ -15,7 +15,7 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <spring.cloud-version>2021.0.4</spring.cloud-version>
+        <spring.cloud-version>2022.0.1</spring.cloud-version>
     </properties>
 
     <dependencies>
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.5.0</version>
+            <version>42.5.4</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
