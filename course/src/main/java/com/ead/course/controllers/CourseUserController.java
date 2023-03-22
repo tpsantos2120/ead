@@ -4,6 +4,7 @@ import com.ead.course.dtos.SubscriptionDTO;
 import com.ead.course.models.CourseModel;
 import com.ead.course.services.CourseService;
 import com.ead.course.services.UserService;
+import com.ead.course.specifications.SpecificationTemplate;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,14 +28,15 @@ public class CourseUserController {
     private final UserService userService;
 
     @GetMapping("/v1/courses/{courseId}/users")
-    public ResponseEntity<Object> getAllUsersByCourseId(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
-                                                        @PathVariable(value = "courseId") UUID courseId) {
+    public ResponseEntity<Object> getAllUsersByCourseId(@PageableDefault(sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
+                                                        @PathVariable(value = "courseId") UUID courseId,
+                                                        SpecificationTemplate.UserSpec spec) {
         Optional<CourseModel> courseModelOptional = courseService.findById(courseId);
         if (courseModelOptional.isEmpty()) {
             log.warn("Course not found with id {}", courseId);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course Not Found.");
         }
-        return ResponseEntity.status(HttpStatus.OK).body("");
+        return ResponseEntity.status(HttpStatus.OK).body(userService.findAll(SpecificationTemplate.usersByCourseId(courseId).and(spec), pageable));
 
     }
 

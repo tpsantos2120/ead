@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -87,6 +88,14 @@ public class CourseController {
                                                                    sort = "id",
                                                                    direction = Sort.Direction.ASC) Pageable pageable,
                                                            @RequestParam(required = false) UUID userId) {
+        if (Objects.nonNull(userId)) {
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    courseService.findAll(
+                            SpecificationTemplate.coursesByUserId(userId).and(spec),
+                            pageable
+                    )
+            );
+        }
         return ResponseEntity.status(HttpStatus.OK).body(courseService.findAll(spec, pageable));
     }
 
