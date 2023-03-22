@@ -9,7 +9,6 @@ import com.ead.authuser.models.UserModel;
 import com.ead.authuser.service.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +53,6 @@ public class AuthenticationController implements UserView {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: CPF already exists.");
             }
             userModel = mapper.userDtoToUserModel(userDto);
-            BeanUtils.copyProperties(userDto, userModel);
             userModel.setUserStatus(UserStatus.ACTIVE);
             userModel.setUserType(UserType.STUDENT);
             userService.saveUser(userModel);

@@ -32,11 +32,7 @@ import java.util.UUID;
                 @UniqueConstraint(
                         name = "uk_email_unique",
                         columnNames = "EMAIL"
-                ),
-                @UniqueConstraint(
-                        name = "uk_cpf_unique",
-                        columnNames = "CPF"
-                ),
+                )
         })
 public class UserModel extends RepresentationModel<UserModel> implements Serializable {
     @Serial
