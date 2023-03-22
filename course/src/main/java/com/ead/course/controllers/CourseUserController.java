@@ -8,9 +8,9 @@ import com.ead.course.models.CourseModel;
 import com.ead.course.models.CourseUserModel;
 import com.ead.course.services.CourseService;
 import com.ead.course.services.CourseUserService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -19,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
-import javax.validation.Valid;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,8 +34,13 @@ public class CourseUserController {
     private final CourseUserService courseUserService;
 
     @GetMapping("/v1/courses/{courseId}/users")
-    public ResponseEntity<Page<UserDTO>> getAllUsersByCourseId(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
-                                                               @PathVariable(value = "courseId") UUID courseId) {
+    public ResponseEntity<Object> getAllUsersByCourseId(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
+                                                        @PathVariable(value = "courseId") UUID courseId) {
+        Optional<CourseModel> courseModelOptional = courseService.findById(courseId);
+        if (courseModelOptional.isEmpty()) {
+            log.warn("Course not found with id {}", courseId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course Not Found.");
+        }
         return ResponseEntity.status(HttpStatus.OK).body(authUserClient.getAllCoursesByUserId(pageable, courseId));
 
     }
@@ -72,5 +76,15 @@ public class CourseUserController {
         CourseUserModel courseUserModel = courseUserService.saveAndSendSubscriptionUserToCourse(courseModelOptional.get().convertToCourseUserModel(subscriptionDTO.getUserId()));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(courseUserModel);
+    }
+
+    @DeleteMapping("/v1/courses/users/{userId}")
+    public ResponseEntity<Object> deleteCourseUserByUser(@PathVariable(value = "userId") UUID userId) {
+        if (!courseUserService.existsByUserId(userId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("CourseUser not found.");
+        }
+        courseUserService.deleteCourseUserByUser(userId);
+        return ResponseEntity.status(HttpStatus.OK).body("CourseUser deleted successfully.");
+
     }
 }

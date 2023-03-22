@@ -61,4 +61,11 @@ public class AuthUserClient {
         log.info("Request URL: {} ", url);
         restTemplate.postForEntity(url, courseUserDTO, Void.class);
     }
+
+    public void deleteCourseInAuthUser(UUID courseId) {
+        String url = utilsService.createUrlForUserCourseDeletion(courseId);
+        log.debug("Request URL: {} ", url);
+        log.info("Request URL: {} ", url);
+        restTemplate.exchange(url, HttpMethod.DELETE, null, String.class);
+    }
 }
