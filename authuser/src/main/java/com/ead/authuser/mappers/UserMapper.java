@@ -1,25 +1,27 @@
 package com.ead.authuser.mappers;
 
+import com.ead.authuser.dtos.UserDTO;
 import com.ead.authuser.dtos.UserEventDto;
 import com.ead.authuser.models.UserModel;
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.stereotype.Component;
-
-import java.util.List;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
-@Component
 public interface UserMapper {
     @Mapping(target = "actionType", ignore = true)
-    UserEventDto entityToDTO(UserModel userModel);
+    UserEventDto userModelToUserEventDto(UserModel userModel);
 
-    List<UserEventDto> entityToDTO(Iterable<UserModel> userModels);
-
-    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "userType", ignore = true)
+    @Mapping(target = "userStatus", ignore = true)
     @Mapping(target = "lastUpdatedDate", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
-    UserModel dtoToEntity(UserEventDto userEventDto);
+    UserModel userDtoToUserModel(UserDTO userDto);
 
-    List<UserModel> dtoToEntity(Iterable<UserEventDto> userEventDtos);
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "fullName", source = "fullName")
+    @Mapping(target = "phoneNumber", source = "phoneNumber")
+    @Mapping(target = "cpf", source = "cpf")
+    void updateUserModel(UserDTO userDTO, @MappingTarget UserModel userModel);
 }

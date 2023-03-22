@@ -4,6 +4,7 @@ import com.ead.authuser.dtos.UserDTO;
 import com.ead.authuser.dtos.UserView;
 import com.ead.authuser.enums.UserStatus;
 import com.ead.authuser.enums.UserType;
+import com.ead.authuser.mappers.UserMapper;
 import com.ead.authuser.models.UserModel;
 import com.ead.authuser.service.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -22,10 +23,12 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController implements UserView {
 
     private final UserService userService;
+    private final UserMapper mapper;
 
     @Autowired
-    public AuthenticationController(UserService userService) {
+    public AuthenticationController(UserService userService, UserMapper mapper) {
         this.userService = userService;
+        this.mapper = mapper;
     }
 
     @PostMapping("/signup")
@@ -50,6 +53,7 @@ public class AuthenticationController implements UserView {
                 log.warn("CPF {} already exists", userDto.getCpf());
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: CPF already exists.");
             }
+            userModel = mapper.userDtoToUserModel(userDto);
             BeanUtils.copyProperties(userDto, userModel);
             userModel.setUserStatus(UserStatus.ACTIVE);
             userModel.setUserType(UserType.STUDENT);

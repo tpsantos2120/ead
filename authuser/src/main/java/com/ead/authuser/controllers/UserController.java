@@ -2,13 +2,12 @@ package com.ead.authuser.controllers;
 
 import com.ead.authuser.dtos.UserDTO;
 import com.ead.authuser.dtos.UserView;
+import com.ead.authuser.mappers.UserMapper;
 import com.ead.authuser.models.UserModel;
 import com.ead.authuser.service.UserService;
 import com.ead.authuser.specifications.SpecificationTemplate;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.log4j.Log4j2;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,8 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,10 +31,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class UserController implements UserView {
 
     private final UserService userService;
+    private final UserMapper mapper;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserMapper mapper) {
         this.userService = userService;
+        this.mapper = mapper;
     }
 
     @GetMapping
@@ -99,12 +98,7 @@ public class UserController implements UserView {
             log.warn("User not found with id {}", userId);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User was not found.");
         }
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration()
-                .setSkipNullEnabled(true)
-                .setMatchingStrategy(MatchingStrategies.STRICT);
-        modelMapper.map(userDto, userModelOptional.get());
-        userModelOptional.get().setLastUpdatedDate(LocalDateTime.now(ZoneId.of("UTC")));
+        mapper.updateUserModel(userDto, userModelOptional.get());
         userService.save(userModelOptional.get());
         log.debug("PUT UserController::updateUserById updated {}", userModelOptional.get().getId());
         log.info("User updated successfully with id {}", userModelOptional.get().getId());
@@ -128,7 +122,6 @@ public class UserController implements UserView {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Mismatched old password.");
         }
         userModelOptional.get().setPassword(userDto.getPassword());
-        userModelOptional.get().setLastUpdatedDate(LocalDateTime.now(ZoneId.of("UTC")));
         userService.save(userModelOptional.get());
         log.debug("PUT UserController::updatePasswordById updated with id {}", userModelOptional.get().getId());
         log.info("User password updated successfully with id {}", userModelOptional.get().getId());
@@ -148,7 +141,6 @@ public class UserController implements UserView {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User was not found.");
         }
         userModelOptional.get().setImageUrl(userDto.getImageUrl());
-        userModelOptional.get().setLastUpdatedDate(LocalDateTime.now(ZoneId.of("UTC")));
         userService.save(userModelOptional.get());
         log.debug("PUT UserController::updateImageById updated with id {}", userModelOptional.get().getId());
         log.info("User password updated successfully with id {}", userModelOptional.get().getId());

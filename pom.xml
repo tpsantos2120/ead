@@ -43,6 +43,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.18.26</version>
             <optional>true</optional>
         </dependency>
         <!-- https://mvnrepository.com/artifact/net.kaczmarzyk/specification-arg-resolver -->
@@ -108,6 +109,17 @@
                         <source>17</source> <!-- depending on your project -->
                         <target>17</target> <!-- depending on your project -->
                         <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>1.18.26</version>
+                            </path>
+                            <!-- This is needed when using Lombok 1.18.16 and above -->
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok-mapstruct-binding</artifactId>
+                                <version>0.2.0</version>
+                            </path>
                             <path>
                                 <groupId>org.mapstruct</groupId>
                                 <artifactId>mapstruct-processor</artifactId>

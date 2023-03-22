@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserModel saveUser(UserModel userModel) {
         var savedUserModel = save(userModel);
-        var userEventDto = mapper.entityToDTO(savedUserModel);
+        var userEventDto = mapper.userModelToUserEventDto(savedUserModel);
         userEventPublisher.publishUserEvent(userEventDto, ActionType.CREATE);
         return savedUserModel;
     }
