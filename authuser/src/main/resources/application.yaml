@@ -6,12 +6,10 @@ server:
 spring:
   application:
     name: ead-authuser-service
-
   datasource:
     url: jdbc:postgresql://localhost:5432/ead-authuser-v2
     username: ProjectDecoder
     password: microservices
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -25,10 +23,11 @@ spring:
         show_sql: true
         format_sql: true
       dialect: org.hibernate.dialect.PostgreSQLDialect
-
   output:
     ansi:
       enabled: always
+  rabbitmq:
+    addresses: amqps://ejyhyskp:UUvKu6A90bcyMQhiQJtgQHXOWc_ah-XQ@woodpecker.rmq.cloudamqp.com/ejyhyskp
 
 logging:
   level:
