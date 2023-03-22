@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -44,20 +43,12 @@ public class UserController implements UserView {
     @GetMapping
     public ResponseEntity<Page<UserModel>> getAllUsers(SpecificationTemplate.UserSpec spec,
                                                        @PageableDefault(
-                                                               page = 0,
-                                                               size = 10,
                                                                sort = "id",
                                                                direction = Sort.Direction.ASC
-                                                       ) Pageable pageable,
-                                                       @RequestParam(required = false) UUID courseId) {
+                                                       ) Pageable pageable) {
 
         log.debug("GET UserController::getAllUsers received request");
-        Page<UserModel> userModelPage = null;
-        if (Objects.nonNull(courseId)) {
-            userModelPage = userService.findAll(SpecificationTemplate.usersByCourseId(courseId).and(spec), pageable);
-        } else {
-            userModelPage = userService.findAll(spec, pageable);
-        }
+        Page<UserModel> userModelPage = userService.findAll(spec, pageable);
 
         if (!userModelPage.isEmpty()) {
             for (UserModel user : userModelPage.toList()) {
