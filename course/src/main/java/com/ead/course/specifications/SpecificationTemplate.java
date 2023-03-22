@@ -1,18 +1,15 @@
 package com.ead.course.specifications;
 
 import com.ead.course.models.CourseModel;
-import com.ead.course.models.CourseUserModel;
 import com.ead.course.models.LessonModel;
 import com.ead.course.models.ModuleModel;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Root;
 import net.kaczmarzyk.spring.data.jpa.domain.Equal;
 import net.kaczmarzyk.spring.data.jpa.domain.Like;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
 import org.springframework.data.jpa.domain.Specification;
-
-import jakarta.persistence.criteria.Expression;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Root;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -51,13 +48,5 @@ public class SpecificationTemplate {
 
     @Spec(path = "title", spec = Like.class)
     public interface LessonSpec extends Specification<LessonModel> {
-    }
-
-    public static Specification<CourseModel> coursesByUserId(UUID userId) {
-        return (root, query, cb) -> {
-            query.distinct(true);
-            Join<CourseModel, CourseUserModel> coursesByUserIdJoin = root.join("coursesByUserId");
-            return cb.equal(coursesByUserIdJoin.get("userId"), userId);
-        };
     }
 }

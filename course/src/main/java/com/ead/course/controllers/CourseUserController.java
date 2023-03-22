@@ -1,13 +1,9 @@
 package com.ead.course.controllers;
 
-import com.ead.course.clients.AuthUserClient;
 import com.ead.course.dtos.SubscriptionDTO;
-import com.ead.course.dtos.UserDTO;
-import com.ead.course.enums.UserStatus;
 import com.ead.course.models.CourseModel;
-import com.ead.course.models.CourseUserModel;
 import com.ead.course.services.CourseService;
-import com.ead.course.services.CourseUserService;
+import com.ead.course.services.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -17,9 +13,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,9 +23,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class CourseUserController {
 
-    private final AuthUserClient authUserClient;
     private final CourseService courseService;
-    private final CourseUserService courseUserService;
+    private final UserService userService;
 
     @GetMapping("/v1/courses/{courseId}/users")
     public ResponseEntity<Object> getAllUsersByCourseId(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
@@ -41,7 +34,7 @@ public class CourseUserController {
             log.warn("Course not found with id {}", courseId);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course Not Found.");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(authUserClient.getAllCoursesByUserId(pageable, courseId));
+        return ResponseEntity.status(HttpStatus.OK).body("");
 
     }
 
@@ -49,42 +42,10 @@ public class CourseUserController {
     public ResponseEntity<Object> subscribeUserToCourse(@PathVariable(value = "courseId") UUID courseId,
                                                         @RequestBody @Valid SubscriptionDTO subscriptionDTO) {
         Optional<CourseModel> courseModelOptional = courseService.findById(courseId);
-        ResponseEntity<UserDTO> responseUser = null;
-        CourseUserModel responseUserCourse = null;
         if (courseModelOptional.isEmpty()) {
             log.warn("Course not found with id {}", courseId);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course Not Found.");
         }
-        if (courseUserService.existsByCourseAndUserId(courseModelOptional.get(), subscriptionDTO.getUserId())) {
-            log.warn("User already subscribed to course with id {}", courseId);
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("User already subscribed to course.");
-        }
-
-        try {
-            responseUser = authUserClient.getOneUserById(subscriptionDTO.getUserId());
-            if (Objects.requireNonNull(responseUser.getBody()).getUserStatus().equals(UserStatus.BLOCKED)) {
-                log.warn("User is blocked");
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("User is blocked.");
-            }
-        } catch (HttpClientErrorException e) {
-            if (e.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
-                log.warn("User not found with id {}", subscriptionDTO.getUserId());
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found.");
-            }
-        }
-
-        CourseUserModel courseUserModel = courseUserService.saveAndSendSubscriptionUserToCourse(courseModelOptional.get().convertToCourseUserModel(subscriptionDTO.getUserId()));
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(courseUserModel);
-    }
-
-    @DeleteMapping("/v1/courses/users/{userId}")
-    public ResponseEntity<Object> deleteCourseUserByUser(@PathVariable(value = "userId") UUID userId) {
-        if (!courseUserService.existsByUserId(userId)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("CourseUser not found.");
-        }
-        courseUserService.deleteCourseUserByUser(userId);
-        return ResponseEntity.status(HttpStatus.OK).body("CourseUser deleted successfully.");
-
+        return ResponseEntity.status(HttpStatus.CREATED).body("");
     }
 }
