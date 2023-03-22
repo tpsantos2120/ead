@@ -1,10 +1,12 @@
 package com.ead.authuser.service.impl;
 
 import com.ead.authuser.clients.CourseClient;
+import com.ead.authuser.enums.ActionType;
+import com.ead.authuser.mappers.UserMapper;
 import com.ead.authuser.models.UserModel;
+import com.ead.authuser.publishers.UserEventPublisher;
 import com.ead.authuser.repositories.UserRepository;
 import com.ead.authuser.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -19,11 +21,14 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final CourseClient courseClient;
+    private final UserEventPublisher userEventPublisher;
+    private final UserMapper mapper;
 
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository, CourseClient courseClient) {
+    public UserServiceImpl(UserRepository userRepository, CourseClient courseClient, UserEventPublisher userEventPublisher, UserMapper mapper) {
         this.userRepository = userRepository;
         this.courseClient = courseClient;
+        this.userEventPublisher = userEventPublisher;
+        this.mapper = mapper;
     }
 
     @Override
@@ -43,8 +48,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void save(UserModel userModel) {
-        userRepository.save(userModel);
+    public UserModel save(UserModel userModel) {
+        return userRepository.save(userModel);
     }
 
     @Override
@@ -65,5 +70,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsByCpf(String cpf) {
         return userRepository.existsByCpf(cpf);
+    }
+
+    @Override
+    @Transactional
+    public UserModel saveUser(UserModel userModel) {
+        var savedUserModel = save(userModel);
+        var userEventDto = mapper.entityToDTO(savedUserModel);
+        userEventPublisher.publishUserEvent(userEventDto, ActionType.CREATE);
+        return savedUserModel;
     }
 }

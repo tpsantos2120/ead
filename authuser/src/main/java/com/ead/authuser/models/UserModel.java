@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serial;
@@ -76,8 +78,10 @@ public class UserModel extends RepresentationModel<UserModel> implements Seriali
     private String imageUrl;
 
     @Column(name = "CREATED_AT", nullable = false)
+    @CreationTimestamp
     private LocalDateTime creationDate;
 
     @Column(name = "UPDATED_AT", nullable = false)
+    @UpdateTimestamp
     private LocalDateTime lastUpdatedDate;
 }

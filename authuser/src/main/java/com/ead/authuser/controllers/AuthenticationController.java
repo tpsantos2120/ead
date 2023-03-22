@@ -15,9 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-
 @Log4j2
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -56,9 +53,7 @@ public class AuthenticationController implements UserView {
             BeanUtils.copyProperties(userDto, userModel);
             userModel.setUserStatus(UserStatus.ACTIVE);
             userModel.setUserType(UserType.STUDENT);
-            userModel.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
-            userModel.setLastUpdatedDate(LocalDateTime.now(ZoneId.of("UTC")));
-            userService.save(userModel);
+            userService.saveUser(userModel);
             log.debug("POST registerUser userDto saved {}", userModel.getId());
             log.info("User saved successfully {}", userModel.getId());
         } catch (Exception e) {
