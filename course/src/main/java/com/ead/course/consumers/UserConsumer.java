@@ -37,10 +37,8 @@ public class UserConsumer {
         var userModel = mapper.userEventDtoToUserModel(userEventDto);
 
         switch (ActionType.valueOf(userEventDto.getActionType())) {
-            case CREATE -> userService.save(userModel);
-//            case DELETE -> userService.delete(userModel);
-//            case UPDATE -> userService.update(userModel);
+            case CREATE, UPDATE -> userService.save(userModel);
+            case DELETE -> userService.delete(userModel.getId());
         }
-
     }
 }

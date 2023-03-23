@@ -29,6 +29,6 @@ public class InstructorController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
         userModelOptional.get().setUserType(UserType.INSTRUCTOR);
-        return ResponseEntity.status(HttpStatus.OK).body(userService.save(userModelOptional.get()));
+        return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(userModelOptional.get()));
     }
 }

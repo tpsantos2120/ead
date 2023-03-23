@@ -80,7 +80,7 @@ public class UserController implements UserView {
             log.warn("User not found with id {}", userId);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User was not found.");
         }
-        userService.delete(userModelOptional.get());
+        userService.deleteUser(userModelOptional.get());
         log.debug("DELETE UserController::deleteUserById deleted {}", userModelOptional.get().getId());
         log.info("User deleted successfully with id {}", userModelOptional.get().getId());
         return ResponseEntity.status(HttpStatus.OK).body("User was deleted successfully.");
@@ -99,7 +99,7 @@ public class UserController implements UserView {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User was not found.");
         }
         mapper.updateUserModel(userDto, userModelOptional.get());
-        userService.save(userModelOptional.get());
+        userService.updateUser(userModelOptional.get());
         log.debug("PUT UserController::updateUserById updated {}", userModelOptional.get().getId());
         log.info("User updated successfully with id {}", userModelOptional.get().getId());
         return ResponseEntity.status(HttpStatus.OK).body(userModelOptional.get());
@@ -122,7 +122,7 @@ public class UserController implements UserView {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: Mismatched old password.");
         }
         userModelOptional.get().setPassword(userDto.getPassword());
-        userService.save(userModelOptional.get());
+        userService.updatePassword(userModelOptional.get());
         log.debug("PUT UserController::updatePasswordById updated with id {}", userModelOptional.get().getId());
         log.info("User password updated successfully with id {}", userModelOptional.get().getId());
         return ResponseEntity.status(HttpStatus.OK).body("Password updated successfully.");
@@ -141,7 +141,7 @@ public class UserController implements UserView {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User was not found.");
         }
         userModelOptional.get().setImageUrl(userDto.getImageUrl());
-        userService.save(userModelOptional.get());
+        userService.updateUser(userModelOptional.get());
         log.debug("PUT UserController::updateImageById updated with id {}", userModelOptional.get().getId());
         log.info("User password updated successfully with id {}", userModelOptional.get().getId());
         return ResponseEntity.status(HttpStatus.OK).body(userModelOptional.get());

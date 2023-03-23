@@ -72,12 +72,33 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByCpf(cpf);
     }
 
-    @Override
     @Transactional
-    public UserModel saveUser(UserModel userModel) {
+    @Override
+    public void saveUser(UserModel userModel) {
         var savedUserModel = save(userModel);
         var userEventDto = mapper.userModelToUserEventDto(savedUserModel);
         userEventPublisher.publishUserEvent(userEventDto, ActionType.CREATE);
+    }
+
+    @Transactional
+    @Override
+    public void deleteUser(UserModel userModel) {
+        delete(userModel);
+        var userEventDto = mapper.userModelToUserEventDto(userModel);
+        userEventPublisher.publishUserEvent(userEventDto, ActionType.DELETE);
+    }
+
+    @Override
+    public UserModel updateUser(UserModel userModel) {
+        var savedUserModel = save(userModel);
+        var userEventDto = mapper.userModelToUserEventDto(savedUserModel);
+        userEventPublisher.publishUserEvent(userEventDto, ActionType.UPDATE);
         return savedUserModel;
+    }
+
+
+    @Override
+    public UserModel updatePassword(UserModel userModel) {
+        return save(userModel);
     }
 }
