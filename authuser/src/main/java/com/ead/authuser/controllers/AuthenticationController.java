@@ -4,19 +4,16 @@ import com.ead.authuser.dtos.UserDTO;
 import com.ead.authuser.dtos.UserView;
 import com.ead.authuser.enums.UserStatus;
 import com.ead.authuser.enums.UserType;
+import com.ead.authuser.mappers.UserMapper;
 import com.ead.authuser.models.UserModel;
 import com.ead.authuser.service.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 @Log4j2
 @RestController
@@ -25,10 +22,12 @@ import java.time.ZoneId;
 public class AuthenticationController implements UserView {
 
     private final UserService userService;
+    private final UserMapper mapper;
 
     @Autowired
-    public AuthenticationController(UserService userService) {
+    public AuthenticationController(UserService userService, UserMapper mapper) {
         this.userService = userService;
+        this.mapper = mapper;
     }
 
     @PostMapping("/signup")
@@ -53,12 +52,10 @@ public class AuthenticationController implements UserView {
                 log.warn("CPF {} already exists", userDto.getCpf());
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Error: CPF already exists.");
             }
-            BeanUtils.copyProperties(userDto, userModel);
+            userModel = mapper.userDtoToUserModel(userDto);
             userModel.setUserStatus(UserStatus.ACTIVE);
             userModel.setUserType(UserType.STUDENT);
-            userModel.setCreationDate(LocalDateTime.now(ZoneId.of("UTC")));
-            userModel.setLastUpdatedDate(LocalDateTime.now(ZoneId.of("UTC")));
-            userService.save(userModel);
+            userService.saveUser(userModel);
             log.debug("POST registerUser userDto saved {}", userModel.getId());
             log.info("User saved successfully {}", userModel.getId());
         } catch (Exception e) {

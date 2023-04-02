@@ -88,12 +88,13 @@ public class CourseController {
                                                                    sort = "id",
                                                                    direction = Sort.Direction.ASC) Pageable pageable,
                                                            @RequestParam(required = false) UUID userId) {
-        log.debug("GET CourseController::getAllCourses received request");
         if (Objects.nonNull(userId)) {
-            log.debug("GET CourseController::getAllCourses received request for user {}", userId);
             return ResponseEntity.status(HttpStatus.OK).body(
                     courseService.findAll(
-                            SpecificationTemplate.coursesByUserId(userId).and(spec), pageable));
+                            SpecificationTemplate.coursesByUserId(userId).and(spec),
+                            pageable
+                    )
+            );
         }
         return ResponseEntity.status(HttpStatus.OK).body(courseService.findAll(spec, pageable));
     }

@@ -1,12 +1,12 @@
 package com.ead.authuser.service.impl;
 
 import com.ead.authuser.clients.CourseClient;
-import com.ead.authuser.models.UserCourseModel;
+import com.ead.authuser.enums.ActionType;
+import com.ead.authuser.mappers.UserMapper;
 import com.ead.authuser.models.UserModel;
-import com.ead.authuser.repositories.UserCourseRepository;
+import com.ead.authuser.publishers.UserEventPublisher;
 import com.ead.authuser.repositories.UserRepository;
 import com.ead.authuser.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -20,14 +20,15 @@ import java.util.UUID;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final UserCourseRepository userCourseRepository;
     private final CourseClient courseClient;
+    private final UserEventPublisher userEventPublisher;
+    private final UserMapper mapper;
 
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserCourseRepository userCourseRepository, CourseClient courseClient) {
+    public UserServiceImpl(UserRepository userRepository, CourseClient courseClient, UserEventPublisher userEventPublisher, UserMapper mapper) {
         this.userRepository = userRepository;
-        this.userCourseRepository = userCourseRepository;
         this.courseClient = courseClient;
+        this.userEventPublisher = userEventPublisher;
+        this.mapper = mapper;
     }
 
     @Override
@@ -43,21 +44,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void delete(UserModel userModel) {
-        boolean deleteUserCourseInCourse = false;
-        List<UserCourseModel> userCourseModelList = userCourseRepository.findAllUsersCoursesByUserId(userModel.getId());
-        if (!userCourseModelList.isEmpty()) {
-            userCourseRepository.deleteAll(userCourseModelList);
-            deleteUserCourseInCourse = true;
-        }
         userRepository.delete(userModel);
-        if (deleteUserCourseInCourse) {
-            courseClient.deleteUserInCourse(userModel.getId());
-        }
     }
 
     @Override
-    public void save(UserModel userModel) {
-        userRepository.save(userModel);
+    public UserModel save(UserModel userModel) {
+        return userRepository.save(userModel);
     }
 
     @Override
@@ -78,5 +70,35 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsByCpf(String cpf) {
         return userRepository.existsByCpf(cpf);
+    }
+
+    @Transactional
+    @Override
+    public void saveUser(UserModel userModel) {
+        var savedUserModel = save(userModel);
+        var userEventDto = mapper.userModelToUserEventDto(savedUserModel);
+        userEventPublisher.publishUserEvent(userEventDto, ActionType.CREATE);
+    }
+
+    @Transactional
+    @Override
+    public void deleteUser(UserModel userModel) {
+        delete(userModel);
+        var userEventDto = mapper.userModelToUserEventDto(userModel);
+        userEventPublisher.publishUserEvent(userEventDto, ActionType.DELETE);
+    }
+
+    @Override
+    public UserModel updateUser(UserModel userModel) {
+        var savedUserModel = save(userModel);
+        var userEventDto = mapper.userModelToUserEventDto(savedUserModel);
+        userEventPublisher.publishUserEvent(userEventDto, ActionType.UPDATE);
+        return savedUserModel;
+    }
+
+
+    @Override
+    public UserModel updatePassword(UserModel userModel) {
+        return save(userModel);
     }
 }

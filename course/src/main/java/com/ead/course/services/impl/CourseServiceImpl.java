@@ -1,14 +1,12 @@
 package com.ead.course.services.impl;
 
-import com.ead.course.clients.AuthUserClient;
 import com.ead.course.models.CourseModel;
-import com.ead.course.models.CourseUserModel;
 import com.ead.course.models.LessonModel;
 import com.ead.course.models.ModuleModel;
 import com.ead.course.repositories.CourseRepository;
-import com.ead.course.repositories.CourseUserRepository;
 import com.ead.course.repositories.LessonRepository;
 import com.ead.course.repositories.ModuleRepository;
+import com.ead.course.repositories.UserRepository;
 import com.ead.course.services.CourseService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,23 +26,19 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final ModuleRepository moduleRepository;
     private final LessonRepository lessonRepository;
-    private final CourseUserRepository courseUserRepository;
-    private final AuthUserClient authUserClient;
-
+    private final UserRepository userRepository;
 
     @Autowired
-    public CourseServiceImpl(CourseRepository courseRepository, ModuleRepository moduleRepository, LessonRepository lessonRepository, CourseUserRepository courseUserRepository, AuthUserClient authUserClient) {
+    public CourseServiceImpl(CourseRepository courseRepository, ModuleRepository moduleRepository, LessonRepository lessonRepository, UserRepository userRepository) {
         this.courseRepository = courseRepository;
         this.moduleRepository = moduleRepository;
         this.lessonRepository = lessonRepository;
-        this.courseUserRepository = courseUserRepository;
-        this.authUserClient = authUserClient;
+        this.userRepository = userRepository;
     }
 
     @Transactional
     @Override
     public void delete(CourseModel courseModel) {
-        boolean deleteCourseUserInAuthUser = false;
         List<ModuleModel> moduleModelList = moduleRepository.findAllModulesByCourseId(courseModel.getId());
         if (!moduleModelList.isEmpty()) {
             for (ModuleModel module : moduleModelList) {
@@ -56,15 +50,8 @@ public class CourseServiceImpl implements CourseService {
             }
             moduleRepository.deleteAll(moduleModelList);
         }
-        List<CourseUserModel> courseUserModelList = courseUserRepository.findAllCoursesUsersByCourseId(courseModel.getId());
-        if (!courseUserModelList.isEmpty()) {
-            courseUserRepository.deleteAll(courseUserModelList);
-            deleteCourseUserInAuthUser = true;
-        }
+        courseRepository.deleteCourseUserByCourse(courseModel.getId());
         courseRepository.delete(courseModel);
-        if (deleteCourseUserInAuthUser) {
-            authUserClient.deleteCourseInAuthUser(courseModel.getId());
-        }
     }
 
     @Override
@@ -80,5 +67,16 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Page<CourseModel> findAll(Specification<CourseModel> spec, Pageable pageable) {
         return courseRepository.findAll(spec, pageable);
+    }
+
+    @Override
+    public boolean existsByCourseAndUser(UUID courseId, UUID userId) {
+        return courseRepository.existsByCourseAndUser(courseId, userId);
+    }
+
+    @Transactional
+    @Override
+    public void saveSubscribedUserToCourse(UUID courseId, UUID userId) {
+        courseRepository.saveSubscribedUserToCourse(courseId, userId);
     }
 }

@@ -4,16 +4,15 @@ import com.ead.authuser.enums.UserStatus;
 import com.ead.authuser.enums.UserType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
-import org.springframework.hateoas.RepresentationModel;
-
 import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -33,11 +32,7 @@ import java.util.UUID;
                 @UniqueConstraint(
                         name = "uk_email_unique",
                         columnNames = "EMAIL"
-                ),
-                @UniqueConstraint(
-                        name = "uk_cpf_unique",
-                        columnNames = "CPF"
-                ),
+                )
         })
 public class UserModel extends RepresentationModel<UserModel> implements Serializable {
     @Serial
@@ -79,16 +74,10 @@ public class UserModel extends RepresentationModel<UserModel> implements Seriali
     private String imageUrl;
 
     @Column(name = "CREATED_AT", nullable = false)
+    @CreationTimestamp
     private LocalDateTime creationDate;
 
     @Column(name = "UPDATED_AT", nullable = false)
+    @UpdateTimestamp
     private LocalDateTime lastUpdatedDate;
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private Set<UserCourseModel> usersByCourseId;
-
-    public UserCourseModel convertToUserCourseModel(UUID courseId) {
-        return new UserCourseModel(null, this, courseId);
-    }
 }

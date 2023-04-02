@@ -7,7 +7,7 @@ spring:
   application:
     name: ead-course-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/ead-course
+    url: jdbc:postgresql://localhost:5432/ead-course-v2
     username: ProjectDecoder
     password: microservices
   jpa:
@@ -25,6 +25,8 @@ spring:
   output:
     ansi:
       enabled: always
+  rabbitmq:
+    addresses: amqps://ejyhyskp:UUvKu6A90bcyMQhiQJtgQHXOWc_ah-XQ@woodpecker.rmq.cloudamqp.com/ejyhyskp
 
 logging:
   level:
@@ -37,6 +39,12 @@ ead:
   api:
     url:
       authuser: 'http://ead-authuser-service/ead-authuser/v1/users'
+  broker:
+    exchange:
+      userEventExchange: ead.user.event
+    queue:
+      userEventQueue:
+        name: ead.user.event.ms.course
 
 eureka:
   client:
