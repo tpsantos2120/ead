@@ -51,6 +51,13 @@ eureka:
   instance:
     hostname: localhost
 
+resilience4j:
+  retry:
+    instances:
+      retryInstance:
+        maxAttempts: 3
+        waitDuration: 2s
+
 management:
   server:
     port: 9000
