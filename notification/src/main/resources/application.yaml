@@ -27,9 +27,9 @@ spring:
         show_sql: true
   output:
     ansi:
-      enabled: Always
-#  rabbitmq:
-#    addresses: amqps://oqaevxaf:6KU7WK_x0k2Et0CwgwlOOdf95NAR4uPG@woodpecker.rmq.cloudamqp.com/oqaevxaf
+      enabled: always
+  rabbitmq:
+    addresses: amqps://ejyhyskp:UUvKu6A90bcyMQhiQJtgQHXOWc_ah-XQ@woodpecker.rmq.cloudamqp.com/ejyhyskp
 
 
 logging:
