@@ -11,7 +11,7 @@ import java.time.Duration;
 @Configuration
 public class ClientConfig {
 
-    static final int TIMEOUT = 5000;
+    static final int TIMEOUT = 30000;
 
     @Bean
     @LoadBalanced

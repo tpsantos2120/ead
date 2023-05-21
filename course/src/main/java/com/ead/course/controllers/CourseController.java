@@ -88,7 +88,6 @@ public class CourseController {
                                                                    sort = "id",
                                                                    direction = Sort.Direction.ASC) Pageable pageable,
                                                            @RequestParam(required = false) UUID userId) throws InterruptedException {
-        Thread.sleep(50000);
         if (Objects.nonNull(userId)) {
             return ResponseEntity.status(HttpStatus.OK).body(
                     courseService.findAll(
