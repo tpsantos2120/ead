@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Component
@@ -31,7 +32,7 @@ public class CourseClient {
     //@Retry(name = "retryInstance", fallbackMethod = "retryFallback")
     @CircuitBreaker(name = "circuitBreakerInstance", fallbackMethod = "circuitBreakerFallback")
     public Page<CourseDTO> getAllCoursesByUserId(Pageable pageable, UUID userId) {
-        List<CourseDTO> searchResult = null;
+        List<CourseDTO> searchResult;
         ResponseEntity<ResponsePageDTO<CourseDTO>> result = null;
         String url = utilsService.createUrlForGetAllCoursesByUserId(userId, pageable);
         log.debug("Request URL: {} ", url);
@@ -40,12 +41,13 @@ public class CourseClient {
             ParameterizedTypeReference<ResponsePageDTO<CourseDTO>> responseType = new ParameterizedTypeReference<>() {
             };
             result = restTemplate.exchange(url, HttpMethod.GET, null, responseType);
-            searchResult = result.getBody().getContent();
+            searchResult = Objects.requireNonNull(result.getBody()).getContent();
             log.debug("Response Number of Elements: {} ", searchResult.size());
         } catch (HttpStatusCodeException e) {
             log.error("Error request /courses", e);
         }
         log.info("Ending request /courses userId {} ", userId);
+        assert result != null;
         return result.getBody();
     }
 

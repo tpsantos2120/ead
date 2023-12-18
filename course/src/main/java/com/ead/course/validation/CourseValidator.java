@@ -4,7 +4,7 @@ import com.ead.course.dtos.CourseDTO;
 import com.ead.course.enums.UserType;
 import com.ead.course.models.UserModel;
 import com.ead.course.services.UserService;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -13,11 +13,16 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
-@AllArgsConstructor
 public class CourseValidator implements Validator {
 
+    @Qualifier("courseValidator")
     private final Validator validator;
     private final UserService userService;
+
+    public CourseValidator(@Qualifier("courseValidator") Validator validator, UserService userService) {
+        this.validator = validator;
+        this.userService = userService;
+    }
 
     @Override
     public boolean supports(Class<?> clazz) {
